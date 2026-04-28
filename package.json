@@ -10,7 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.22.1"
+    "body-parser": "^2.2.2",
+    "express": "^4.22.1",
+    "nanoid": "^5.1.9",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
