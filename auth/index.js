@@ -2,10 +2,12 @@ const jwt = require('jsonwebtoken');
 const config = require('../config');
 const error = require('../utils/error');
 
-const secret = 'mi_secreto_super_seguro';
+const secret = config.jwt.secret;
 
 function sign(data) {
-    return jwt.sign(data, secret);
+    return jwt.sign(data, secret, {
+        expiresIn: config.jwt.expiresIn,
+    });
 }
 
 function verify(token) {
@@ -15,15 +17,16 @@ function verify(token) {
 const check = {
     own: function(req, owner) {
         const decoded = decodeHeader(req);
-        console.log(decoded);
 
         if (decoded.id !== owner) {
             throw error('No puedes hacer esto', 401);
         }
+
+        return decoded;
     },
 
-    logged: function(req, owner) {
-        const decoded = decodeHeader(req);
+    logged: function(req) {
+        return decodeHeader(req);
     },
 }
 
@@ -52,5 +55,6 @@ function decodeHeader(req) {
 
 module.exports = {
     sign,
+    verify,
     check,
 };

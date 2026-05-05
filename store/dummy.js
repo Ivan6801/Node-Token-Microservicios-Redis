@@ -22,9 +22,19 @@ async function upsert(tabla, data) {
         db[tabla] = [];
     }
 
-    db[tabla].push(data);
+    const index = db[tabla].findIndex(item => item.id === data.id);
 
-    console.log(db);
+    if (index === -1) {
+        db[tabla].push(data);
+        return data;
+    }
+
+    db[tabla][index] = {
+        ...db[tabla][index],
+        ...data,
+    };
+
+    return db[tabla][index];
 }
 
 async function remove(tabla, id) {

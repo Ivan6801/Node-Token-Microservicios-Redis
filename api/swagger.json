@@ -24,6 +24,11 @@
           ],
           "summary": "Lista los usuario",
           "operationId": "listUser",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
           "responses": {
             "default": {
               "description": "Lista de usuarios"
@@ -57,21 +62,90 @@
             }
           }
         }
+      },
+      "/user/{id}": {
+        "get": {
+          "tags": [
+            "user"
+          ],
+          "summary": "Obtiene un usuario por id",
+          "operationId": "getUser",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "default": {
+              "description": "Usuario encontrado"
+            }
+          }
+        },
+        "put": {
+          "tags": [
+            "user"
+          ],
+          "summary": "Actualiza el usuario autenticado",
+          "operationId": "updateUser",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          ],
+          "responses": {
+            "default": {
+              "description": "Usuario actualizado"
+            }
+          }
+        }
+      },
+      "/auth/login": {
+        "post": {
+          "tags": [
+            "user"
+          ],
+          "summary": "Autentica y genera un JWT",
+          "operationId": "login",
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Login"
+              }
+            }
+          ],
+          "responses": {
+            "default": {
+              "description": "Token JWT"
+            }
+          }
+        }
       }
     },
     "securityDefinitions": {
-      "petstore_auth": {
-        "type": "oauth2",
-        "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
-        "flow": "implicit",
-        "scopes": {
-          "write:pets": "modify pets in your account",
-          "read:pets": "read your pets"
-        }
-      },
-      "api_key": {
+      "bearerAuth": {
         "type": "apiKey",
-        "name": "api_key",
+        "name": "Authorization",
         "in": "header"
       }
     },
@@ -82,6 +156,24 @@
           "id": {
             "type": "string"
           },
+          "name": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "Login": {
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
           "username": {
             "type": "string"
           },

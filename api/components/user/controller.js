@@ -1,4 +1,6 @@
-const nanoid = require('nanoid');
+const { nanoid } = require('nanoid');
+const auth = require('../auth');
+const error = require('../../../utils/error');
 
 const TABLA = 'user';
 
@@ -16,20 +18,35 @@ module.exports = function (injectedStore) {
         return store.get(TABLA, id);
     }
 
-    function upsert(body) {
+    async function upsert(body) {
+        if (!body.name) {
+            throw error('El nombre es requerido', 400);
+        }
+
         const user = {
             name: body.name,
         }
+
         if (body.id) {
             user.id = body.id;
         } else {
             user.id = nanoid();
         }
-        return store.upsert(TABLA, user);
+
+        const result = await store.upsert(TABLA, user);
+
+        await auth.upsert({
+            id: user.id,
+            username: body.username,
+            password: body.password,
+        });
+
+        return result;
     }
 
     return {
         list,
         get,
+        upsert,
     }
 }
