@@ -11,7 +11,19 @@ function sign(data) {
 }
 
 function verify(token) {
-    return jwt.verify(token, secret);
+    try {
+        return jwt.verify(token, secret);
+    } catch (err) {
+        if (err.name === 'TokenExpiredError') {
+            throw error('Token expirado', 401);
+        }
+
+        if (err.name === 'JsonWebTokenError') {
+            throw error('Token invalido', 401);
+        }
+
+        throw err;
+    }
 }
 
 const check = {

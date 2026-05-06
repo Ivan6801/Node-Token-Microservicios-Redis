@@ -23,9 +23,18 @@ function handleConnection() {
 
     connection.connect((error) => {
         if (error) {
-            console.error('DB error:', error);
-            setTimeout(handleConnection, 2000);
-            return;
+            console.error('DB error:', error.code);
+
+            if (
+                error.code === 'ECONNREFUSED' ||
+                error.code === 'PROTOCOL_CONNECTION_LOST'
+            ) {
+                console.log('Reintentando conexión a DB...');
+                setTimeout(handleConnection, 3000);
+                return;
+            }
+
+            throw error;
         }
 
         console.log('DB Connected!');
