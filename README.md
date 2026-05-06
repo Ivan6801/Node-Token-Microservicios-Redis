@@ -1,0 +1,24 @@
+# Node Token Microservicios Redis
+
+Este proyecto ahora puede usar almacenamiento persistente con MySQL y levantarse con Docker.
+
+## Ejecutar con Docker
+
+```bash
+docker compose up --build
+```
+
+La API queda disponible en `http://localhost:3001` y Swagger en `http://localhost:3001/api-docs`.
+
+## Variables de entorno
+
+Puedes usar [.env.example](/home/ivanglz12/dev/Node-Token-Microservicios-Redis/.env.example) como referencia.
+
+`REMOTE_DB=true` activa la capa MySQL. Si vale `false`, el proyecto sigue usando `store/dummy.js`.
+
+## Esquema MySQL
+
+El contenedor ejecuta [docker/mysql/init.sql](/home/ivanglz12/dev/Node-Token-Microservicios-Redis/docker/mysql/init.sql) al iniciar y crea estas tablas:
+
+- `user`
+- `auth`
