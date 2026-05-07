@@ -117,6 +117,34 @@
           }
         }
       },
+      "/user/follow/{id}": {
+        "post": {
+          "tags": [
+            "user"
+          ],
+          "summary": "Crea una relacion de seguimiento entre usuarios",
+          "operationId": "followUser",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": "ID del usuario a seguir"
+            }
+          ],
+          "responses": {
+            "default": {
+              "description": "Relacion de seguimiento creada"
+            }
+          }
+        }
+      },
       "/auth/login": {
         "post": {
           "tags": [

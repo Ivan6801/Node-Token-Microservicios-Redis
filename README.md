@@ -22,3 +22,8 @@ El contenedor ejecuta [docker/mysql/init.sql](/home/ivanglz12/dev/Node-Token-Mic
 
 - `user`
 - `auth`
+- `user_follow`
+
+## Endpoint de seguimiento
+
+La API expone `POST /api/user/follow/:id` para crear la relación de seguimiento entre el usuario autenticado y el usuario objetivo.

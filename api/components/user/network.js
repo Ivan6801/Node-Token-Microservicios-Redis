@@ -7,6 +7,7 @@ const secure = require('./secure');
 const router = express.Router();
 
 router.get('/', secure('logged'), list);
+router.post('/follow/:id', secure('follow'), follow);
 router.get('/:id', secure('logged'), get);
 router.post('/', upsert);
 router.put('/:id', secure('update'), upsert);
@@ -32,8 +33,16 @@ function upsert(req, res, next) {
 
     Controller.upsert(req.body)
         .then((user) => {
-            response.success(req, res, user, 200);
+            response.success(req, res, user, 201);
         }).catch(next)
 };
+
+function follow(req, res, next) {
+    Controller.follow(req.user.id, req.params.id)
+        .then((result) => {
+            response.success(req, res, result, 201);
+        }).catch(next)
+}
+
 
 module.exports = router;

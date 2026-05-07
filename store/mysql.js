@@ -4,6 +4,7 @@ const config = require('../config');
 const TABLES = {
     user: 'user',
     auth: 'auth',
+    user_follow: 'user_follow',
 };
 
 let connection;
@@ -87,6 +88,12 @@ async function get(tabla, id) {
 
 async function upsert(tabla, data) {
     const safeTable = getTable(tabla);
+
+    if (tabla === 'user_follow') {
+        await querySql(`INSERT INTO ?? SET ? ON DUPLICATE KEY UPDATE user_from = VALUES(user_from), user_to = VALUES(user_to)`, [safeTable, data]);
+        return query(tabla, data);
+    }
+
     await querySql(`INSERT INTO ?? SET ? ON DUPLICATE KEY UPDATE ?`, [safeTable, data, data]);
     return get(tabla, data.id);
 }

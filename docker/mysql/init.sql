@@ -15,3 +15,17 @@ CREATE TABLE IF NOT EXISTS auth (
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS user_follow (
+    user_from VARCHAR(64) NOT NULL,
+    user_to VARCHAR(64) NOT NULL,
+    PRIMARY KEY (user_from, user_to),
+    CONSTRAINT fk_user_follow_from
+        FOREIGN KEY (user_from) REFERENCES user(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_user_follow_to
+        FOREIGN KEY (user_to) REFERENCES user(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
