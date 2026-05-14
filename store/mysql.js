@@ -7,7 +7,14 @@ const TABLES = {
     user_follow: 'user_follow',
 };
 
+const RETRYABLE_ERRORS = new Set([
+    'ECONNREFUSED',
+    'ETIMEDOUT',
+    'PROTOCOL_CONNECTION_LOST',
+]);
+
 let connection;
+let reconnectTimer;
 
 function createConnection() {
     return mysql.createConnection({
@@ -19,19 +26,33 @@ function createConnection() {
     });
 }
 
+function scheduleReconnect(error) {
+    if (reconnectTimer) {
+        return;
+    }
+
+    if (connection) {
+        connection.removeAllListeners('error');
+        connection.destroy();
+        connection = null;
+    }
+
+    console.log(`Reintentando conexión a DB en 3s${error?.code ? ` (${error.code})` : ''}...`);
+    reconnectTimer = setTimeout(() => {
+        reconnectTimer = null;
+        handleConnection();
+    }, 3000);
+}
+
 function handleConnection() {
     connection = createConnection();
 
     connection.connect((error) => {
         if (error) {
-            console.error('DB error:', error.code);
+            console.error('DB error:', error.code || error.message);
 
-            if (
-                error.code === 'ECONNREFUSED' ||
-                error.code === 'PROTOCOL_CONNECTION_LOST'
-            ) {
-                console.log('Reintentando conexión a DB...');
-                setTimeout(handleConnection, 3000);
+            if (RETRYABLE_ERRORS.has(error.code)) {
+                scheduleReconnect(error);
                 return;
             }
 
@@ -44,8 +65,8 @@ function handleConnection() {
     connection.on('error', (error) => {
         console.error('DB error:', error);
 
-        if (error.code === 'PROTOCOL_CONNECTION_LOST') {
-            handleConnection();
+        if (RETRYABLE_ERRORS.has(error.code)) {
+            scheduleReconnect(error);
             return;
         }
 
