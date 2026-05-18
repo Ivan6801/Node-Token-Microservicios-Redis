@@ -5,10 +5,11 @@ const Store = require('../store/mysql');
 
 const router = express.Router();
 
-router.get('/:tabla', list)
-router.get('/:tabla/:id', get)
-router.post('/:tabla', insert)
-router.put('/:tabla', upsert)
+router.get('/:tabla', list);
+router.get('/:tabla/:id', get);
+router.post('/:tabla', insert);
+router.put('/:tabla', upsert);
+router.post('/:table/query', query);
 
 async function list(req, res, next) {
   try {
@@ -17,6 +18,11 @@ async function list(req, res, next) {
   } catch (error) {
     next(error);
   }
+}
+
+async function query(req, res, next) {
+    const datos = await Store.query(req.params.table, req.body.query, req.body.join)
+    response.success(req, res, datos, 200);
 }
 
 async function get(req, res, next) {

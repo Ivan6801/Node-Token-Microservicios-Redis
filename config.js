@@ -18,6 +18,7 @@ module.exports = {
         database: process.env.MYSQL_DATABASE || 'node_tokens',
     },
     mysqlService: {
-        port: process.env.MYSQL_SERVICE_PORT || 3003,
+        host: process.env.MYSQL_SRV_HOST || 'localhost',
+        port: process.env.MYSQL_SRV_PORT || 3003,
     },
 }
