@@ -4,12 +4,14 @@ const response = require('../network/response');
 const Store = require('../store/mysql');
 
 const router = express.Router();
+const TABLE_PATTERN = ':tabla(user|auth|user_follow)';
+const QUERY_TABLE_PATTERN = ':table(user|auth|user_follow)';
 
-router.get('/:tabla', list);
-router.get('/:tabla/:id', get);
-router.post('/:tabla', insert);
-router.put('/:tabla', upsert);
-router.post('/:table/query', query);
+router.get(`/${TABLE_PATTERN}`, list);
+router.get(`/${TABLE_PATTERN}/:id`, get);
+router.post(`/${TABLE_PATTERN}`, insert);
+router.put(`/${TABLE_PATTERN}`, upsert);
+router.post(`/${QUERY_TABLE_PATTERN}/query`, query);
 
 async function list(req, res, next) {
   try {
@@ -21,8 +23,12 @@ async function list(req, res, next) {
 }
 
 async function query(req, res, next) {
-    const datos = await Store.query(req.params.table, req.body.query, req.body.join)
+  try {
+    const datos = await Store.query(req.params.table, req.body.query, req.body.join);
     response.success(req, res, datos, 200);
+  } catch (error) {
+    next(error);
+  }
 }
 
 async function get(req, res, next) {
@@ -36,7 +42,7 @@ async function get(req, res, next) {
 
 async function insert(req, res, next) {
   try {
-    const datos = await Store.insert(req.params.tabla, req.body);
+    const datos = await Store.upsert(req.params.tabla, req.body);
     response.success(req, res, datos, 201);
   } catch (error) {
     next(error);
@@ -45,7 +51,7 @@ async function insert(req, res, next) {
 
 async function upsert(req, res, next) {
   try {
-    const datos = await Store.upsert(req.params.tabla);
+    const datos = await Store.upsert(req.params.tabla, req.body);
     response.success(req, res, datos, 200);
   } catch (error) {
     next(error);

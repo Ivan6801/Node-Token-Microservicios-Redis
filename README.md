@@ -16,6 +16,34 @@ Puedes usar [.env.example](/home/ivanglz12/dev/Node-Token-Microservicios-Redis/.
 
 `REMOTE_DB=true` activa la capa MySQL. Si vale `false`, el proyecto sigue usando `store/dummy.js`.
 
+## Despliegue en Vercel
+
+El proyecto quedó preparado para desplegarse en Vercel como una sola aplicación Express serverless usando el entrypoint raíz [index.js](/home/ivanglz/ivan/Node-Token-Microservicios-Redis/index.js).
+
+### Pasos
+
+```bash
+npm install
+vercel
+```
+
+### Variables de entorno recomendadas en Vercel
+
+- `REMOTE_DB=true`
+- `JWT_SECRET=tu_secreto`
+- `JWT_EXPIRES_IN=2h`
+- `MYSQL_HOST=...`
+- `MYSQL_PORT=3306`
+- `MYSQL_USER=...`
+- `MYSQL_PASSWORD=...`
+- `MYSQL_DATABASE=...`
+
+### Notas
+
+- En Vercel ya no hace falta exponer el microservicio HTTP de MySQL; la API principal consulta MySQL directamente.
+- La app principal publica `POST /api/auth/login`, `GET|POST|PUT /api/user/*` y Swagger en `/api-docs`.
+- Para probar localmente el comportamiento de Vercel, usa `vercel dev`.
+
 ## Esquema MySQL
 
 El contenedor ejecuta [docker/mysql/init.sql](/home/ivanglz12/dev/Node-Token-Microservicios-Redis/docker/mysql/init.sql) al iniciar y crea estas tablas:

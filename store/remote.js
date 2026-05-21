@@ -1,22 +1,22 @@
 const request = require('request');
 
 function createRemoteDB(host, port) {
-    const URL = 'http://'+ host + ':' + port;
+    const URL = 'http://' + host + ':' + port;
 
     function list(table) {
         return req('GET', table);
     }
 
 	function get(table, id) {
-		return req('GET', table, id);
+		return req('GET', table, { id });
 	}
 
 	function insert(table, data) {
-		return req('POST', table, data);
+		return req('POST', table, { body: data });
 	}
 
 	function update(table, data) {
-		return req('PUT', table, data);
+		return req('PUT', table, { body: data });
 	}
 
 	function upsert(table, data) {
@@ -28,17 +28,20 @@ function createRemoteDB(host, port) {
 	}
 
 	function query(table, query, join) {
-		return req('POST', table + '/query', { query, join });
+		return req('POST', table + '/query', { body: { query, join } });
 	}
 
-    function req(method, table, data) {
-        let url = URL + '/' + table;
-        body = '';
+    function req(method, path, options = {}) {
+        let url = URL + '/' + path;
+        let body = '';
 
-        if (method === 'GET' && data) {
-			url += '/'+ data;
-		} else if (data) {
-			body = JSON.stringify(data);
+        if (method === 'GET' && options.id) {
+			url = URL + '/' + path + '/' + options.id;
+		} else {
+			url = URL + '/' + path;
+			if (options.body) {
+				body = JSON.stringify(options.body);
+			}
 		}
 
         return new Promise((resolve, reject) => {
@@ -63,6 +66,11 @@ function createRemoteDB(host, port) {
 
     return {
         list,
+        get,
+        insert,
+        update,
+        upsert,
+        query,
     }
 }
 
