@@ -5,12 +5,19 @@ const TABLES = {
     user: 'user',
     auth: 'auth',
     user_follow: 'user_follow',
+    post: 'post',
+    post_like: 'post_like',
 };
 
 const RETRYABLE_ERRORS = new Set([
     'ECONNREFUSED',
     'ETIMEDOUT',
     'PROTOCOL_CONNECTION_LOST',
+]);
+
+const LIST_QUERY_TABLES = new Set([
+    'user_follow',
+    'post_like',
 ]);
 
 let connection;
@@ -50,13 +57,8 @@ function handleConnection() {
     connection.connect((error) => {
         if (error) {
             console.error('DB error:', error.code || error.message);
-
-            if (RETRYABLE_ERRORS.has(error.code)) {
-                scheduleReconnect(error);
-                return;
-            }
-
-            throw error;
+            scheduleReconnect(error);
+            return;
         }
 
         console.log('DB Connected!');
@@ -65,12 +67,7 @@ function handleConnection() {
     connection.on('error', (error) => {
         console.error('DB error:', error);
 
-        if (RETRYABLE_ERRORS.has(error.code)) {
-            scheduleReconnect(error);
-            return;
-        }
-
-        throw error;
+        scheduleReconnect(error);
     });
 }
 
@@ -110,8 +107,8 @@ async function get(tabla, id) {
 async function upsert(tabla, data) {
     const safeTable = getTable(tabla);
 
-    if (tabla === 'user_follow') {
-        await querySql(`INSERT INTO ?? SET ? ON DUPLICATE KEY UPDATE user_from = VALUES(user_from), user_to = VALUES(user_to)`, [safeTable, data]);
+    if (tabla === 'user_follow' || tabla === 'post_like') {
+        await querySql(`INSERT INTO ?? SET ? ON DUPLICATE KEY UPDATE ?`, [safeTable, data, data]);
         return query(tabla, data);
     }
 
@@ -133,8 +130,19 @@ async function query(tabla, q) {
         return null;
     }
 
-    const key = keys[0];
-    const rows = await querySql(`SELECT * FROM ?? WHERE ?? = ? LIMIT 1`, [safeTable, key, q[key]]);
+    const where = keys.map(() => '?? = ?').join(' AND ');
+    const values = [];
+
+    keys.forEach((key) => {
+        values.push(key, q[key]);
+    });
+
+    const rows = await querySql(`SELECT * FROM ?? WHERE ${where}`, [safeTable, ...values]);
+
+    if (LIST_QUERY_TABLES.has(tabla)) {
+        return rows;
+    }
+
     return rows[0] || null;
 }
 

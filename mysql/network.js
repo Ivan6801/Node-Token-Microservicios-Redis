@@ -4,8 +4,8 @@ const response = require('../network/response');
 const Store = require('../store/mysql');
 
 const router = express.Router();
-const TABLE_PATTERN = ':tabla(user|auth|user_follow)';
-const QUERY_TABLE_PATTERN = ':table(user|auth|user_follow)';
+const TABLE_PATTERN = ':tabla(user|auth|user_follow|post|post_like)';
+const QUERY_TABLE_PATTERN = ':table(user|auth|user_follow|post|post_like)';
 
 router.get(`/${TABLE_PATTERN}`, list);
 router.get(`/${TABLE_PATTERN}/:id`, get);

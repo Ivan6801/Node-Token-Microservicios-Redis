@@ -65,6 +65,29 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  cache-service:
+    build:
+      context: .
+    container_name: node-token-cache-service
+    command: ["node", "cache/index-cache.js"]
+    environment:
+      CACHE_SRV_PORT: 3004
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "3004:3004"
+    depends_on:
+      redis:
+        condition: service_started
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: node-token-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
   mysql:
     image: mysql:8.4
     container_name: node-token-mysql

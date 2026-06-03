@@ -8,7 +8,7 @@ Este proyecto ahora puede usar almacenamiento persistente con MySQL y levantarse
 docker compose up --build
 ```
 
-La API queda disponible en `http://localhost:3001`, Swagger en `http://localhost:3001/api-docs` y el servicio MySQL en `http://localhost:3003`.
+La API queda disponible en `http://localhost:3001`, Swagger en `http://localhost:3001/api-docs`, el servicio MySQL en `http://localhost:3003` y el `cache-service` en `http://localhost:3004`.
 
 ## Variables de entorno
 

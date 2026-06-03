@@ -10,7 +10,7 @@ const router = express.Router();
 router.get('/', auth('list'), list);
 router.get('/like', auth('list_own'), postsLiked);
 router.get('/:id', auth('get'), get);
-router.post('/', auth('add',), upsert);
+router.post('/', auth('add'), upsert);
 router.put('/', auth('update', { owner: 'user' }), upsert);
 router.post('/:id/like', auth('add'), like);
 router.get('/:id/like', auth('list'), postLikers);
@@ -41,7 +41,7 @@ function upsert(req, res, next) {
 }
 
 function like(req, res, next) {
-	Controller.like(req.params.id, req.user.sub)
+	Controller.like(req.params.id, req.user.id)
 		.then(post => {
 			response.success(req, res, post, 201);
 		})
@@ -57,7 +57,7 @@ function postLikers(req, res, next) {
 }
 
 function postsLiked(req, res, next) {
-	Controller.postsLiked(req.user.sub)
+	Controller.postsLiked(req.user.id)
 		.then(post => {
 			response.success(req, res, post, 200);
 		})

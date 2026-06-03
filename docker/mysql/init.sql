@@ -29,3 +29,30 @@ CREATE TABLE IF NOT EXISTS user_follow (
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS post (
+    id VARCHAR(64) NOT NULL,
+    user VARCHAR(64) NOT NULL,
+    text TEXT NOT NULL,
+    PRIMARY KEY (id),
+    KEY idx_post_user (user),
+    CONSTRAINT fk_post_user
+        FOREIGN KEY (user) REFERENCES user(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS post_like (
+    post VARCHAR(64) NOT NULL,
+    user VARCHAR(64) NOT NULL,
+    PRIMARY KEY (post, user),
+    KEY idx_post_like_user (user),
+    CONSTRAINT fk_post_like_post
+        FOREIGN KEY (post) REFERENCES post(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_post_like_user
+        FOREIGN KEY (user) REFERENCES user(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);

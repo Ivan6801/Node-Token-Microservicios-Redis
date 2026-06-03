@@ -1,4 +1,4 @@
-const nanoid = require('nanoid');
+const { nanoid } = require('nanoid');
 const error = require('../../../utils/error');
 
 const COLLECTION = 'post';
@@ -46,13 +46,11 @@ module.exports = function (injectedStore) {
     }
 
     async function postsLiked(user) {
-        const users = await Store.query(COLLECTION + '_like', { user: user }, { post: post });
-        return users;
+        return Store.query(COLLECTION + '_like', { user: user });
     }
 
     async function postLikers(post) {
-        const users = await Store.query(COLLECTION + '_like', { post: post }, { post: post });
-        return users;
+        return Store.query(COLLECTION + '_like', { post: post });
     }
 
     return {
